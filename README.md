@@ -1,2 +1,2 @@
-# yavs
-yet another video service
+# YAVS
+Yet another service for sharing video with friends from YouTube, Twitch and other sites.
