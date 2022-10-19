@@ -1,7 +1,7 @@
 package yavs.service;
 
 import org.springframework.stereotype.Service;
-import yavs.repository.UserRepository;
+import yavs.repository.user.UserRepository;
 
 @Service
 public class UserService {

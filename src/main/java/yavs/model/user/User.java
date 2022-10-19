@@ -1,14 +1,11 @@
 package yavs.model.user;
 
 import lombok.*;
-import org.hibernate.Hibernate;
 import yavs.model.lobby.Lobby;
 import yavs.model.lobby.Room;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter
