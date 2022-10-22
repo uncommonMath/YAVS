@@ -20,7 +20,7 @@ public class Room {
     @Column(name = "room_id")
     private Long id;
 
-    @ManyToMany(mappedBy = "rooms")
+    @ManyToMany
     private List<User> participants;
 
     @ManyToOne

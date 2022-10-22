@@ -21,7 +21,7 @@ public class Lobby {
     @OneToMany(mappedBy = "lobby")
     private List<Room> rooms;
 
-    @ManyToMany(mappedBy = "lobbies")
+    @ManyToMany
     private List<User> participants;
 
 }
