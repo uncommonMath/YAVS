@@ -18,7 +18,8 @@ public class UserServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return repo.findByEmail(email).toUserDetails();
+//        var user = repo.findByEmail(email).or
+        return repo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("")).toUserDetails();
     }
 
     public User create(User user) {
@@ -26,5 +27,9 @@ public class UserServiceImpl implements UserDetailsService {
         String password = encoder.encode(user.getPassword());
         user.setPassword(password);
         return repo.save(user);
+    }
+
+    public void delete(User user) {
+
     }
 }

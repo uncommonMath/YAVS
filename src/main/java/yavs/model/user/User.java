@@ -8,6 +8,7 @@ import yavs.model.lobby.Lobby;
 import yavs.model.lobby.Room;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -22,8 +23,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private Long id;
+    @NotNull
     private String username;
+    @NotNull
     private String email;
+    @NotNull
     private String password;
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role")
@@ -54,9 +58,9 @@ public class User {
         return getClass().hashCode();
     }
 
-    public UserDTO toUserDTO() {
-        return new UserDTO(id, username, email);
-    }
+//    public UserDTO toUserDTO() {
+//        return new UserDTO(id, username, email);
+//    }
 
     public UserDetails toUserDetails() {
         return new org.springframework.security.core.userdetails.User(
