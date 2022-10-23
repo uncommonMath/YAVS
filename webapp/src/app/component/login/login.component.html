@@ -1,0 +1,40 @@
+<tui-island class="login_container">
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" >
+	<ng-template #success>
+		<tui-svg src="tuiIconCheckLarge" class="success tui-space_left-3"></tui-svg>
+	</ng-template>
+	<h1 class="tui-text_h3 form-title">YAVS Login</h1>
+	<p>
+				   
+		<tui-input formControlName="emailControl"
+				   [(ngModel)]="authUser.userMail"
+		>
+			An email&nbsp;<span class="tui-required"></span>
+		</tui-input>
+		<tui-field-error formControlName="emailControl"></tui-field-error>
+	</p>
+	<p>
+		<tui-input-password formControlName="passwordControl"
+							[(ngModel)]="authUser.password"
+		>
+			A password&nbsp;<span class="tui-required"></span>
+		</tui-input-password>
+		<tui-field-error formControlName="passwordControl"></tui-field-error>
+	</p>
+	<div class="error">
+		<tui-error [error]="error"
+		></tui-error>
+	</div>
+	<p>
+		<button
+			tuiButton
+			appearance="custom"
+			type="submit"
+			class="tui-form__button btn-submit"
+			[disabled]="!loginForm.valid"
+		>
+			Sign in
+		</button>
+	</p>
+	<a tuiLink routerLink="/register">Create account</a>
+</form>

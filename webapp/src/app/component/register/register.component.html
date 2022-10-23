@@ -1,0 +1,54 @@
+<tui-island class="register_container">
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" >
+	<h1 class="tui-text_h3 form-title">YAVS Registration</h1>
+	<p>
+		<tui-input formControlName="emailControl"
+				   [(ngModel)]="newUser.email"
+		>
+			An email&nbsp;<span class="tui-required"></span>
+		</tui-input>
+		<tui-field-error formControlName="emailControl"></tui-field-error>
+	</p>
+	<p>
+		<tui-input formControlName="usernameControl"
+				   [(ngModel)]="newUser.username"
+		>
+			A nickname&nbsp;<span class="tui-required"></span>
+		</tui-input>
+		<tui-field-error formControlName="usernameControl"></tui-field-error>
+	</p>
+	<p>
+		<tui-input-password formControlName="passwordControl"
+							tuiHintContent="A password"
+							[(ngModel)]="newUser.password"
+		>
+			A password&nbsp;<span class="tui-required"></span>
+		</tui-input-password>
+		<tui-field-error formControlName="passwordControl"></tui-field-error>
+	</p>
+	<p>
+		<tui-input-password formControlName="passwordConfirmControl"
+							tuiHintContent="A password confirmation"
+		>
+			Password's confirmation&nbsp;<span class="tui-required"></span>
+		</tui-input-password>
+		<tui-field-error formControlName="passwordConfirmControl"></tui-field-error>
+	</p>
+	<div class="error">
+		<tui-error [error]="error"
+		>
+		</tui-error>
+	</div>
+	<p>
+		<button
+			tuiButton
+			type="submit"
+			appearance="custom"
+			class="tui-form__button btn-submit"
+			[disabled]="!registerForm.valid"
+		>
+			Sign up
+		</button>
+	</p>
+	<a tuiLink routerLink="/login">Login</a>
+</form>

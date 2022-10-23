@@ -1,0 +1,23 @@
+@import '~@taiga-ui/core/styles/taiga-ui-local';
+
+
+.app_component {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+	background: #60d6eb;
+}
+
+.header {
+    flex: 0 1 auto;
+    padding: 0 2rem;
+    align-items: center;
+    color: var(--tui-text-01);
+    background: var(--tui-base-02);
+    .inset-border(bottom, var(--tui-text-01));
+	.shadow(2)
+}
+
+.main_content {
+    flex: 1 1 auto;
+}
