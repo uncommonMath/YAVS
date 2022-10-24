@@ -13,6 +13,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByToken(String email);
+
     @Override
     void deleteById(Long id);
 }
