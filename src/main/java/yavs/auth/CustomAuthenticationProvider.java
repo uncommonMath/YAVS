@@ -35,7 +35,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 //        if (userService.validate(customToken))
         if (true)
             return new PreAuthenticatedAuthenticationToken("AuthenticatedUser",
-                    "ROLE_ADMIN",
+                    customToken,
                     new ArrayList<>(userService.loadUserByUsername("100").getAuthorities()));
         else
             throw new AccessDeniedException("Invalid authentication token");
