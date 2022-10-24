@@ -69,7 +69,7 @@ public class SecurityConfig {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(customTokenAuthenticationProvider);
-        authenticationManagerBuilder.userDetailsService(userDetailsService);
+//        authenticationManagerBuilder.userDetailsService(userDetailsService);
         return authenticationManagerBuilder.build();
     }
 
