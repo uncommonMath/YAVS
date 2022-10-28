@@ -25,7 +25,7 @@ public class CustomAuthenticationProcessingFilter extends AbstractAuthentication
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException, IOException, ServletException {
+            throws AuthenticationException {
         // Extract from request
         String header = request.getHeader("X-Auth");
         System.out.println("в обосранном фильтре");

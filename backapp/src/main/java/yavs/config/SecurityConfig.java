@@ -31,10 +31,11 @@ public class SecurityConfig {
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/user/register/**").permitAll()
+                .antMatchers("/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic();
+                .httpBasic().disable();
         return http.build();
     }
 

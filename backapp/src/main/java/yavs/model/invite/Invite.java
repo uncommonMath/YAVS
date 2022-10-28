@@ -13,12 +13,14 @@ import java.util.UUID;
 @Entity
 @Table(name = "invites")
 @Getter
-@Setter
+//@Setter
 @ToString
 //@RequiredArgsConstructor
 @NoArgsConstructor
+//@AllArgsConstructor
 public class Invite {
     @Id
+    @GeneratedValue(generator = "UUID")
     @GenericGenerator(
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
@@ -27,9 +29,12 @@ public class Invite {
     private UUID id;
 
     @OneToOne
-    @JoinColumn(name = "lobby_id"/*, referencedColumnName = "lobby_id"*/)
-    @JsonBackReference
+    @JoinColumn(name = "lobby_id")
     private Lobby lobby;
+
+    public Invite(Lobby lobby) {
+        this.lobby = lobby;
+    }
 
     @Override
     public boolean equals(Object o) {

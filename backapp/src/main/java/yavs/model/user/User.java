@@ -42,10 +42,6 @@ public class User {
         return getClass().hashCode();
     }
 
-//    public UserDTO toUserDTO() {
-//        return new UserDTO(id, username, email);
-//    }
-
     public UserDetails toUserDetails() {
         return new org.springframework.security.core.userdetails.User(
                 email,

@@ -2,27 +2,27 @@ package yavs.controller;
 
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import yavs.model.lobby.Room;
 import yavs.service.RoomService;
 
-import javax.persistence.Entity;
+import javax.persistence.EntityNotFoundException;
 import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/room")
-public class RoomController implements IController<Room, Long> {
-    private final RoomService service;
+public class RoomController {
+    private final RoomService roomService;
 
     private static final Room DEFAULT_ROOM = new Room();
 
     public RoomController(RoomService service) {
-        this.service = service;
+        this.roomService = service;
     }
 
     @GetMapping("default")
@@ -71,27 +71,30 @@ public class RoomController implements IController<Room, Long> {
         System.out.println(chatMessage);
     }
 
-    @Override
-//    @PostMapping
-    public ResponseEntity<Room> create(Room entity, String token) {
-        return null;
+    @PutMapping
+    public ResponseEntity<Room> update(@RequestBody Room room) {
+        if (roomService.getById(room.getId()) != null) {
+            return new ResponseEntity<>(roomService.update(room), HttpStatus.OK);
+        } else
+            throw new EntityNotFoundException("Room with id=" + room.getId() + "doesn't exist");
     }
 
-    @Override
-//    @PostMapping
-    public ResponseEntity<Room> update(Room entity, String token) {
-        return null;
+    @GetMapping("/{id}")
+    public ResponseEntity<Room> getById(@PathVariable Long id) {
+        var room = roomService.getById(id);
+        if (room != null) {
+            return new ResponseEntity<>(room, HttpStatus.OK);
+        } else
+            throw new EntityNotFoundException("Room with id=" + id + "doesn't exist");
     }
 
-    @Override
-//    @GetMapping
-    public ResponseEntity<Room> getById(Long id) {
-        return null;
-    }
-
-    @Override
-//    @DeleteMapping
-    public ResponseEntity<Room> deleteById(Long id) {
-        return null;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        var room = roomService.getById(id);
+        if (room != null) {
+            roomService.delete(id);
+            return new ResponseEntity<>("Successfully deleted", HttpStatus.OK);
+        } else
+            throw new EntityNotFoundException("Room with id=" + id + "doesn't exist");
     }
 }

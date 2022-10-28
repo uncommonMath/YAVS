@@ -13,22 +13,22 @@ public class RoomService implements IBasedService<Room, Long> {
     }
 
     @Override
-    public Room save(Room obj) {
-        return null;
+    public Room save(Room room) {
+        return repo.save(room);
     }
 
     @Override
-    public Room update(Room obj) {
-        return null;
+    public Room update(Room room) {
+        return repo.save(room);
     }
 
     @Override
     public Room getById(Long id) {
-        return null;
+        return repo.findById(id).orElse(null);
     }
 
     @Override
     public void delete(Long id) {
-
+        repo.deleteById(id);
     }
 }

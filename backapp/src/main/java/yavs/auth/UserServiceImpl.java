@@ -38,4 +38,8 @@ public class UserServiceImpl implements UserDetailsService {
         System.out.println("валидация");
         return true;
     }
+
+    public void deleteById(Long id) {
+        repo.deleteById(id);
+    }
 }

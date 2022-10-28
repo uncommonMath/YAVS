@@ -1,6 +1,9 @@
 package yavs.model.lobby;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import yavs.model.user.User;
 
 import javax.persistence.*;
@@ -18,10 +21,21 @@ public class Lobby {
     @Column(name = "lobby_id")
     private Long id;
 
-    @OneToMany(mappedBy = "lobby")
+    private String name;
+
+    @OneToMany(cascade=CascadeType.ALL)
+    @JoinTable(
+            name = "room_lobby",
+            joinColumns = {@JoinColumn(name = "lobby_id")},
+            inverseJoinColumns = {@JoinColumn(name = "room_id")}
+    )
     private List<Room> rooms;
 
     @ManyToMany
+    @JoinTable(
+            name = "user_lobby",
+            joinColumns = {@JoinColumn(name = "lobby_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
     private List<User> participants;
-
 }

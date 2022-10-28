@@ -2,25 +2,21 @@ package yavs.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import yavs.model.user.User;
-import yavs.service.UserService;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private final UserService service;
-    private final UserServiceImpl userDetailsService;
+    private final UserServiceImpl userService;
 
-    public UserController(UserService service, UserServiceImpl userDetailsService) {
-        this.service = service;
-        this.userDetailsService = userDetailsService;
+    public UserController(UserServiceImpl userDetailsService) {
+        this.userService = userDetailsService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
-        return ResponseEntity.ok(userDetailsService.create(user));
+        return ResponseEntity.ok(userService.create(user));
     }
 
     public ResponseEntity<User> update(User entity, String token) {
@@ -34,7 +30,8 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    public ResponseEntity<User> deleteById(Long id) {
-        return null;
+    public ResponseEntity<String> deleteById(Long id) {
+        userService.deleteById(id);
+        return new ResponseEntity<>("Successfully deleted!", HttpStatus.OK);
     }
 }
