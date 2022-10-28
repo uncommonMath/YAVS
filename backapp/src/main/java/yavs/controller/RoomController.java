@@ -42,7 +42,6 @@ public class RoomController {
         private Double time;
     }
 
-
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
