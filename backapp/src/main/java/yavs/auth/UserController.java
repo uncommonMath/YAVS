@@ -2,6 +2,7 @@ package yavs.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import yavs.model.user.User;
 import yavs.service.UserService;
@@ -27,6 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+//    @PreAuthorize("hasAnyAuthority('write')")
     public ResponseEntity<User> getById(@PathVariable Long id) {
         var user = new User();
         return new ResponseEntity<>(user, HttpStatus.OK);
