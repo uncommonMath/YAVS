@@ -1,0 +1,58 @@
+<tui-island class="watch_container">
+    <form [formGroup]="watchForm" (ngSubmit)="onSubmit()" >
+        <ng-template #success>
+            <tui-svg src="tuiIconCheckLarge" class="success tui-space_left-3"></tui-svg>
+        </ng-template>
+        <h1 class="tui-text_h3 form-title">YAVS Watch</h1>
+        <p>
+                       
+            <tui-input formControlName="urlControl"
+                       [(ngModel)]="url"
+            >
+                An Url&nbsp;<span class="tui-required"></span>
+            </tui-input>
+            <tui-field-error formControlName="urlControl"></tui-field-error>
+        </p>
+        <p>
+            <button
+                tuiButton
+                appearance="custom"
+                type="submit"
+                class="tui-form__button btn-submit"
+                [disabled]="!watchForm.valid"
+            >
+                Start
+            </button>
+        </p>
+    </form>
+</tui-island>
+<ng-template
+#preview
+let-preview
+>
+<tui-preview
+    [rotatable]="false"
+    [zoomable]="false"
+>
+    <div class="content" id="player">
+        {{ ready(preview) }}
+    </div>
+    <!--<iframe
+        [src]="ytId"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope"
+        allowfullscreen
+        class="content"
+        id="player"
+    ></iframe>-->
+
+
+    <button
+        tuiIconButton
+        tuiPreviewAction
+        icon="tuiIconCloseLarge"
+        title="Close"
+        (click)="close()"
+    ></button>
+</tui-preview>
+</ng-template>

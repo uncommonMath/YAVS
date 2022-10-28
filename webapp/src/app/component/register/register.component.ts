@@ -26,7 +26,7 @@ import {ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
 export class RegisterComponent implements OnInit {
   newUser: NewUser
   error: string | null
-  
+
   constructor(private router: Router, private userService: UserService/*, private cd: ChangeDetectorRef,
 	@Inject(TuiDialogService) private readonly dialogService: TuiDialogService,*/
   ) {
