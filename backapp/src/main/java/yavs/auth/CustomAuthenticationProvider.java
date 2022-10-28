@@ -40,6 +40,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             var authorizedUser = new PreAuthenticatedAuthenticationToken("AuthenticatedUser",
                     customToken,
                     new ArrayList<>(userService.loadUserByUsername("100").getAuthorities()));
+            authorizedUser.setAuthenticated(true);
             SecurityContextHolder.getContext().setAuthentication(authorizedUser);
 
             return authorizedUser;
