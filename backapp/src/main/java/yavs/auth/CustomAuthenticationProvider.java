@@ -3,7 +3,6 @@ package yavs.auth;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -21,7 +20,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     public CustomAuthenticationProvider(@Qualifier("userServiceImpl") UserDetailsService userService) {
         this.userService = userService;
-//        ProviderManager
     }
 
     @Override

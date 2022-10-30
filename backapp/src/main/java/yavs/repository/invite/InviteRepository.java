@@ -1,7 +1,6 @@
 package yavs.repository.invite;
 
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import yavs.model.invite.Invite;
 import yavs.model.lobby.Lobby;

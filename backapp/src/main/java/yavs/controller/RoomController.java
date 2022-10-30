@@ -1,17 +1,23 @@
 package yavs.controller;
 
-import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.*;
 import yavs.model.lobby.Room;
+import yavs.model.messages.ChatMessage;
+import yavs.model.messages.YTMessage;
 import yavs.service.RoomService;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @RestController
@@ -30,34 +36,22 @@ public class RoomController {
         return ResponseEntity.ok(DEFAULT_ROOM);
     }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString
-    public static class Message {
-        private String from;
-        private String text;
-        private Integer state;
-        private Double time;
-    }
-
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     private static final Pattern PATTERN = Pattern.compile("watch\\?v=([^&?/\\\\]+)");
 
     @MessageMapping("/")
-    public void processMessage(@Payload Message chatMessage) {
-        if (chatMessage.state != null) {
+    public void processMessage(@Payload YTMessage chatMessage) {
+        if (chatMessage.getState() != null) {
             messagingTemplate.convertAndSendToUser(
                     "default",
                     "/",
-                    new Message(chatMessage.from, null, chatMessage.state, chatMessage.time));
+                    new YTMessage(chatMessage.getFrom(), null, chatMessage.getState(), chatMessage.getTime()));
             System.out.println(chatMessage);
             return;
         }
-        var originalUrl = chatMessage.text;
+        var originalUrl = chatMessage.getText();
         var matcher = PATTERN.matcher(originalUrl);
         var ytId = "";
         if (matcher.find()) {
@@ -66,8 +60,55 @@ public class RoomController {
         messagingTemplate.convertAndSendToUser(
                 "default",
                 "/",
-                new Message("SERVER", ytId, null, null));
+                new YTMessage("SERVER", ytId, null, null));
         System.out.println(chatMessage);
+    }
+
+    @MessageMapping("/video/status/{roomId}")
+    @SendTo("out/{roomId}/")
+    public YTMessage videoStatusChangedNotify(@DestinationVariable Long roomId, @Payload YTMessage message) {
+        if (message.getState() != null) {
+            return new YTMessage(message.getFrom(), null, message.getState(), message.getTime());
+        } else {
+            var originalUrl = message.getText();
+            var matcher = PATTERN.matcher(originalUrl);
+            var ytId = "";
+            if (matcher.find()) {
+                ytId = matcher.group(1);
+            }
+            return new YTMessage("SERVER", ytId, null, null);
+        }
+    }
+
+    @MessageMapping("/lol/{id}")
+    @SendTo("/out/govno/{id}")
+    public YTMessage send(@DestinationVariable int id, MessageHeaders headers, @Payload YTMessage chatMessage) {
+        System.out.println(chatMessage);
+        System.out.println("id = " + id);
+        for (Map.Entry<String, Object> entry : headers.entrySet()) {
+            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
+        }
+        return new YTMessage("eblan", "pizda", 0, 0.0);
+    }
+
+    @MessageMapping("/govno")
+    @SendToUser("/out/govno")
+    public YTMessage govno(MessageHeaders headers, @Payload YTMessage chatMessage) {
+        System.out.println(chatMessage);
+        for (Map.Entry<String, Object> entry : headers.entrySet()) {
+            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
+        }
+        return new YTMessage("eblan", "pizda", 0, 0.0);
+    }
+
+    /**
+     * chat method-handling
+     * @return received message
+     */
+    @MessageMapping("/chat/{roomId}")
+    @SendTo("/out/chat/{roomId}")
+    public ChatMessage send(@DestinationVariable Long roomId, @Payload ChatMessage message) {
+        return message;
     }
 
     @PutMapping

@@ -10,26 +10,23 @@ import javax.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/lobby")
-public class LobbyController /*implements IController<Lobby, Long>*/ {
+public class LobbyController {
     private final LobbyService service;
 
     public LobbyController(LobbyService service) {
         this.service = service;
     }
 
-//    @Override
     @PostMapping
     public ResponseEntity<Lobby> create(@RequestBody Lobby entity) {
         return new ResponseEntity<>(service.save(entity), HttpStatus.OK);
     }
 
-//    @Override
     @PutMapping
     public ResponseEntity<Lobby> update(@RequestBody Lobby entity) {
         return new ResponseEntity<>(service.update(entity), HttpStatus.OK);
     }
 
-//    @Override
     @GetMapping("/{id}")
     public ResponseEntity<Lobby> getById(@PathVariable Long id) {
         var lobby = service.getById(id);
@@ -39,7 +36,6 @@ public class LobbyController /*implements IController<Lobby, Long>*/ {
             throw new EntityNotFoundException("Entity with id=" + id + "not found!");
     }
 
-//    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
         if (service.getById(id) != null) {

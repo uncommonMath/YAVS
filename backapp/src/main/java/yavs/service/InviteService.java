@@ -1,6 +1,5 @@
 package yavs.service;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import yavs.model.invite.Invite;
 import yavs.model.lobby.Lobby;

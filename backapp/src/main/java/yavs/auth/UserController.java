@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import yavs.model.user.User;
 
+import javax.persistence.EntityNotFoundException;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -19,8 +21,13 @@ public class UserController {
         return ResponseEntity.ok(userService.create(user));
     }
 
-    public ResponseEntity<User> update(User entity, String token) {
-        return null;
+    @PutMapping
+    public ResponseEntity<User> update(@RequestBody User user) {
+        if (userService.getUserById(user.getId()) != null) {
+            return ResponseEntity.ok(userService.update(user));
+        } else {
+            throw new EntityNotFoundException("User with id=" + user.getId() + " not found!");
+        }
     }
 
     @GetMapping("/{id}")

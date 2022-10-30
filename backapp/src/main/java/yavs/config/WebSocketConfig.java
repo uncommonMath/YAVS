@@ -20,7 +20,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker( "/out");
         config.setApplicationDestinationPrefixes("/in");
-        config.setUserDestinationPrefix("/out");
     }
 
     @Override
@@ -29,6 +28,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
+
+        registry
+                .addEndpoint("/ws")
+                .setAllowedOriginPatterns("*");
     }
 
     @Override

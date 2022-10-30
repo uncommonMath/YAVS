@@ -1,6 +1,5 @@
 package yavs.model.invite;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,11 +12,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "invites")
 @Getter
-//@Setter
 @ToString
-//@RequiredArgsConstructor
 @NoArgsConstructor
-//@AllArgsConstructor
 public class Invite {
     @Id
     @GeneratedValue(generator = "UUID")

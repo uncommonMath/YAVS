@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
     public void delete(User user) {
-
+         repo.delete(user);
     }
 
     public boolean validate(String customToken) {
@@ -39,7 +39,15 @@ public class UserServiceImpl implements UserDetailsService {
         return true;
     }
 
+    public User getUserById(Long id) {
+        return repo.findById(id).orElse(null);
+    }
+
     public void deleteById(Long id) {
         repo.deleteById(id);
+    }
+
+    public User update(User user) {
+        return repo.save(user);
     }
 }

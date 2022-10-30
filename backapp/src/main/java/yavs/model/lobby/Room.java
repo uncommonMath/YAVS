@@ -1,6 +1,5 @@
 package yavs.model.lobby;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -27,11 +26,6 @@ public class Room {
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private List<User> participants;
-
-//    @ManyToOne()
-//    @JoinColumn(name = "lobby_id")
-//    @JsonIgnore
-//    private Lobby lobby;
 
     @Override
     public int hashCode() {
