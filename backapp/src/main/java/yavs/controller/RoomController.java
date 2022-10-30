@@ -102,7 +102,7 @@ public class RoomController {
     }
 
     /**
-     * chat method-handling
+     * chat message-handling method
      * @return received message
      */
     @MessageMapping("/chat/{roomId}")
