@@ -34,6 +34,7 @@ public class UserController {
 //    @PreAuthorize("hasAnyAuthority('write')")
     public ResponseEntity<User> getById(@PathVariable Long id) {
         var user = new User();
+        System.out.println("kek");
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

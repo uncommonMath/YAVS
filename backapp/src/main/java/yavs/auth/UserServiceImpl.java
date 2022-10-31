@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //        var user = repo.findByEmail(email).or
         System.out.println("в ебаном лоад бай юзер хуй");
-        return repo.findByToken(email).orElseThrow(() -> new UsernameNotFoundException("")).toUserDetails();
+        return repo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("")).toUserDetails();
     }
 
     public User create(User user) {
