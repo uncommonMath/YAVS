@@ -8,17 +8,16 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.bind.annotation.*;
 import yavs.model.lobby.Room;
 import yavs.model.messages.ChatMessage;
 import yavs.model.messages.YTMessage;
-import yavs.model.user.MutedUser;
+import yavs.model.user.User;
 import yavs.service.RoomService;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
+import java.security.Principal;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -26,7 +25,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/room")
 public class RoomController {
     private final RoomService roomService;
-    private static final Room DEFAULT_ROOM = new Room();
+//    private static final Room DEFAULT_ROOM = new Room();
     private final SimpUserRegistry simpUserRegistry;
 
     private final SimpMessagingTemplate template;
@@ -37,10 +36,10 @@ public class RoomController {
         this.template = template;
     }
 
-    @GetMapping("default")
-    public ResponseEntity<Room> getDefaultRoom() {
-        return ResponseEntity.ok(DEFAULT_ROOM);
-    }
+//    @GetMapping("default")
+//    public ResponseEntity<Room> getDefaultRoom() {
+//        return ResponseEntity.ok(DEFAULT_ROOM);
+//    }
 
 
 
@@ -65,35 +64,34 @@ public class RoomController {
         }
     }
 
-    @MessageMapping("/chat/all1/{id}")
-//    @SendToUser("/queue/{id}")
-    public void send2(@DestinationVariable int id, MessageHeaders headers, @Payload YTMessage chatMessage) {
-//        System.out.println(chatMessage);
-        System.out.println("id = " + id);
-        for (Map.Entry<String, Object> entry : headers.entrySet()) {
-            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
-        }
-        System.out.println(simpUserRegistry.getUserCount());
-//        System.out.println(simpUserRegistry.getU);
-        simpUserRegistry.getUsers().forEach(x -> System.out.println(x.getName()));
-        template.convertAndSendToUser("user@mail.com", "/out/10", new YTMessage("eblan", "pizda", 0, 0.0));
-    }
+//    @MessageMapping("/chat/all1/{id}")
+////    @SendToUser("/queue/{id}")
+//    public void send2(@DestinationVariable int id, MessageHeaders headers, @Payload YTMessage chatMessage) {
+////        System.out.println(chatMessage);
+//        System.out.println("id = " + id);
+//        for (Map.Entry<String, Object> entry : headers.entrySet()) {
+//            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
+//        }
+//        System.out.println(simpUserRegistry.getUserCount());
+////        System.out.println(simpUserRegistry.getU);
+//        simpUserRegistry.getUsers().forEach(x -> System.out.println(x.getName()));
+//        template.convertAndSendToUser("user@mail.com", "/out/10", new YTMessage("eblan", "pizda", 0, 0.0));
+//    }
 
     /**
      * chat message-handling method
      */
     @MessageMapping("/chat/{roomId}")
-    @SendTo("/out/chat")
-    public void send(@DestinationVariable Long roomId, @Payload ChatMessage message) {
+//    @SendTo("/out/chat")
+    public void chat(@DestinationVariable Long roomId, @Payload ChatMessage message, Principal principal) {
+        var sender = roomService.getUserByUsername(principal.getName());
         var users = roomService.getAllUsers(roomId);
-
-        simpUserRegistry.getUsers().forEach(x -> System.out.println(x.getName()));
-//        roomService.addToBlacklist("user@mail.com", 10L);
-//        var subscriptions = new ArrayList<>(new ArrayList<>(simpUserRegistry.getUser("user@mail.com").getSessions()).get(0).getSubscriptions());
-//
-//        roomService.addToBlacklist("user@mail.com", 10L);
-        if (!roomService.isUserMuted(new MutedUser(message.getFrom(), roomId))) {
-            users.forEach(user -> template.convertAndSendToUser(user.getEmail(), "/out/chat", message));
+//        simpUserRegistry.getUsers().forEach(x -> System.out.println(x.getName()));
+        if (!roomService.isUserMuted(sender, roomId)) {
+            users.stream()
+                    .filter(user -> !user.getBlacklist().contains(sender.getId()))
+                    .forEach(user -> template.convertAndSendToUser(user.getEmail(),
+                            "/out/chat", message));
         }
     }
 
@@ -124,9 +122,15 @@ public class RoomController {
             throw new EntityNotFoundException("Room with id=" + id + "doesn't exist");
     }
 
-    @PutMapping("/mute/{username}/{roomId}")
-    public ResponseEntity<String> muteUser(@PathVariable String username,@PathVariable Long roomId) {
-        roomService.muteUser(new MutedUser(username, roomId));
+    @PostMapping("/mute/global")
+    public ResponseEntity<String> muteUser(@RequestBody User userToBeMuted,@RequestParam Long roomId) {
+        roomService.muteUserByHost(roomId, userToBeMuted);
+        return new ResponseEntity<>("Muted", HttpStatus.OK);
+    }
+
+    @PostMapping("/mute/p2p")
+    public ResponseEntity<String> muteUser(@RequestParam Long roomId, @RequestParam Long requesterUserId, @RequestBody Long toBeMutedUserId) {
+        roomService.muteUserByAnotherUser(roomId, requesterUserId, toBeMutedUserId);
         return new ResponseEntity<>("Muted", HttpStatus.OK);
     }
 }

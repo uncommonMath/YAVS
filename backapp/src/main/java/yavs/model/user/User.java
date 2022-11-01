@@ -7,6 +7,7 @@ import yavs.auth.roles.Status;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,6 +38,14 @@ public class User {
 
     private String token;
 
+    @ElementCollection
+    @CollectionTable(
+            name = "mutedUsers",
+            joinColumns = {@JoinColumn(name = "requesterUser_id")}
+    )
+    @Column(name = "mutedUser_id")
+    private List<Long> blacklist;
+
     @Override
     public int hashCode() {
         return getClass().hashCode();
@@ -52,5 +61,9 @@ public class User {
                 true,
                 role.getAuthorities()
         );
+    }
+
+    public void addToBlacklist(User mutedUser) {
+        blacklist.add(mutedUser.getId());
     }
 }

@@ -6,6 +6,7 @@ import lombok.Setter;
 import yavs.model.user.User;
 
 import javax.persistence.*;
+import java.util.HashMap;
 import java.util.List;
 
 @Entity
@@ -26,6 +27,14 @@ public class Room {
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private List<User> participants;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "mutedUsers_room",
+            joinColumns = {@JoinColumn(name = "room_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private List<User> mutedUsers;
 
     @Override
     public int hashCode() {

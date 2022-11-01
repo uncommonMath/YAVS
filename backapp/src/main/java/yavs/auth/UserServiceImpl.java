@@ -39,6 +39,10 @@ public class UserServiceImpl implements UserDetailsService {
         return true;
     }
 
+    public User findByEmail(String email) {
+        return repo.findByEmail(email).orElse(null);
+    }
+
     public User getUserById(Long id) {
         return repo.findById(id).orElse(null);
     }
