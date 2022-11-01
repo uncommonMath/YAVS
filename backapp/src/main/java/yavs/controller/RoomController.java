@@ -2,11 +2,9 @@ package yavs.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +16,15 @@ import yavs.service.RoomService;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/room")
 public class RoomController {
     private final RoomService roomService;
-//    private static final Room DEFAULT_ROOM = new Room();
     private final SimpUserRegistry simpUserRegistry;
-
     private final SimpMessagingTemplate template;
+    private static final Pattern PATTERN = Pattern.compile("watch\\?v=([^&?/\\\\]+)");
 
     public RoomController(RoomService service, SimpUserRegistry simpUserRegistry, SimpMessagingTemplate template) {
         this.roomService = service;
@@ -36,17 +32,7 @@ public class RoomController {
         this.template = template;
     }
 
-//    @GetMapping("default")
-//    public ResponseEntity<Room> getDefaultRoom() {
-//        return ResponseEntity.ok(DEFAULT_ROOM);
-//    }
-
-
-
-    private static final Pattern PATTERN = Pattern.compile("watch\\?v=([^&?/\\\\]+)");
-
     @MessageMapping("/video/status/{roomId}")
-//    @SendToUser("/out/{roomId}/")
     public void videoStatusChangedNotify(@DestinationVariable Long roomId, @Payload YTMessage message) {
         var users = roomService.getAllUsers(roomId);
         if (message.getState() != null) {
@@ -64,29 +50,13 @@ public class RoomController {
         }
     }
 
-//    @MessageMapping("/chat/all1/{id}")
-////    @SendToUser("/queue/{id}")
-//    public void send2(@DestinationVariable int id, MessageHeaders headers, @Payload YTMessage chatMessage) {
-////        System.out.println(chatMessage);
-//        System.out.println("id = " + id);
-//        for (Map.Entry<String, Object> entry : headers.entrySet()) {
-//            System.out.println(entry.getKey() + ":" + entry.getValue().toString());
-//        }
-//        System.out.println(simpUserRegistry.getUserCount());
-////        System.out.println(simpUserRegistry.getU);
-//        simpUserRegistry.getUsers().forEach(x -> System.out.println(x.getName()));
-//        template.convertAndSendToUser("user@mail.com", "/out/10", new YTMessage("eblan", "pizda", 0, 0.0));
-//    }
-
     /**
      * chat message-handling method
      */
     @MessageMapping("/chat/{roomId}")
-//    @SendTo("/out/chat")
     public void chat(@DestinationVariable Long roomId, @Payload ChatMessage message, Principal principal) {
         var sender = roomService.getUserByUsername(principal.getName());
         var users = roomService.getAllUsers(roomId);
-//        simpUserRegistry.getUsers().forEach(x -> System.out.println(x.getName()));
         if (!roomService.isUserMuted(sender, roomId)) {
             users.stream()
                     .filter(user -> !user.getBlacklist().contains(sender.getId()))

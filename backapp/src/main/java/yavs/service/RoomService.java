@@ -4,25 +4,21 @@ import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 import yavs.auth.UserServiceImpl;
 import yavs.model.lobby.Room;
-import yavs.model.user.MutedUser;
 import yavs.model.user.User;
 import yavs.repository.lobby.RoomRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class RoomService implements IBasedService<Room, Long> {
     private final RoomRepository repo;
     private final SimpUserRegistry simpUserRegistry;
-//    private final ArrayList<MutedUser> blacklist;
     private final UserServiceImpl userService;
 
     public RoomService(RoomRepository repo, SimpUserRegistry simpUserRegistry, UserServiceImpl userService) {
         this.repo = repo;
         this.simpUserRegistry = simpUserRegistry;
         this.userService = userService;
-//        this.blacklist = new ArrayList<>();
     }
 
     @Override
