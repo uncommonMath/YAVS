@@ -17,10 +17,9 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//        var user = repo.findByEmail(email).or
-        System.out.println("в ебаном лоад бай юзер хуй");
-        return repo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("")).toUserDetails();
+    public UserDetails loadUserByUsername(String token) {
+        var user = repo.findByToken(token).orElse(null);
+        return user != null ? user.toUserDetails() : null;
     }
 
     public User create(User user) {
@@ -34,9 +33,9 @@ public class UserServiceImpl implements UserDetailsService {
          repo.delete(user);
     }
 
-    public boolean validate(String customToken) {
-        System.out.println("валидация");
-        return true;
+    public boolean validate(String token) {
+        var user =  repo.findByToken(token).orElse(null);
+        return user != null;
     }
 
     public User findByEmail(String email) {

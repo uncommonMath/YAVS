@@ -2,6 +2,7 @@ package yavs.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import yavs.model.user.User;
 
@@ -22,6 +23,7 @@ public class UserController {
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<User> update(@RequestBody User user) {
         if (userService.getUserById(user.getId()) != null) {
             return ResponseEntity.ok(userService.update(user));
@@ -31,14 +33,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-//    @PreAuthorize("hasAnyAuthority('write')")
+    @PreAuthorize("hasAuthority('user')")
     public ResponseEntity<User> getById(@PathVariable Long id) {
-        var user = new User();
-        System.out.println("kek");
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        var user = userService.getUserById(id);
+        if (user != null)
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        else
+            throw new EntityNotFoundException("User with id=" + " not found!");
     }
 
-    public ResponseEntity<String> deleteById(Long id) {
+    @PreAuthorize("hasAuthority('system_admin')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
         userService.deleteById(id);
         return new ResponseEntity<>("Successfully deleted!", HttpStatus.OK);
     }

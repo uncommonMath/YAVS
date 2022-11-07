@@ -1,7 +1,6 @@
 package yavs.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -9,20 +8,26 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.cors.CorsConfiguration;
+import yavs.auth.CustomTokenAuthenticationProcessingFilter;
+import yavs.auth.UserServiceImpl;
+
+import javax.servlet.Filter;
+
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    private final UserDetailsService userDetailsService;
+    private final UserServiceImpl userService;
 
     @Autowired
-    public SecurityConfig(@Qualifier("userServiceImpl") UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(UserServiceImpl userDetailsService) {
+        this.userService = userDetailsService;
     }
 
     @Bean
@@ -30,28 +35,45 @@ public class SecurityConfig {
         http
                 .csrf()
                 .disable()
+                .addFilterBefore(getFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/user/register/**").permitAll()
 //                .antMatchers("/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic();//.disable();
+                .httpBasic().disable();
         http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
         return http.build();
     }
+
+//    @Bean
+    protected Filter getFilter() {
+        CustomTokenAuthenticationProcessingFilter filter = new CustomTokenAuthenticationProcessingFilter();
+        filter.setAuthenticationManager(authentication -> {
+                    if (userService.validate(authentication.getPrincipal().toString())) {
+                        authentication.setAuthenticated(true);
+                        var user = userService.loadUserByUsername("1234");
+                        var pre = new PreAuthenticatedAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
+                        pre.setAuthenticated(true);
+                        return pre;
+                    } else
+                        return null;
+                });
+        return filter;
+    }
+
 
     @Bean
     protected AuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setUserDetailsService(userService);
         return daoAuthenticationProvider;
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder()
-    {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 }

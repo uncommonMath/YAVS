@@ -8,6 +8,7 @@ import yavs.model.lobby.Lobby;
 import yavs.service.InviteService;
 import yavs.service.LobbyService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityNotFoundException;
 
 @RestController
@@ -22,6 +23,7 @@ public class InviteController {
     }
 
     @GetMapping
+    @RolesAllowed("ROLE_USER")
     public ResponseEntity<Invite> gitInviteByLobby(@RequestParam("lobbyId") Long id) {
         var lobby = lobbyService.getById(id);
         if (lobby != null) {
