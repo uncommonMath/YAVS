@@ -53,7 +53,7 @@ public class SecurityConfig {
         filter.setAuthenticationManager(authentication -> {
                     if (userService.validate(authentication.getPrincipal().toString())) {
                         authentication.setAuthenticated(true);
-                        var user = userService.loadUserByUsername("1234");
+                        var user = userService.loadUserByUsername(authentication.getPrincipal().toString());
                         var pre = new PreAuthenticatedAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
                         pre.setAuthenticated(true);
                         return pre;
