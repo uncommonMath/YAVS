@@ -21,6 +21,10 @@ public class UserServiceImpl implements UserDetailsService {
         return user != null ? user.toUserDetails() : null;
     }
 
+    public User findByToken(String token) {
+        return repo.findByToken(token).orElse(null);
+    }
+
     public User create(User user) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
         String password = encoder.encode(user.getPassword());

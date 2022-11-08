@@ -52,9 +52,8 @@ public class SecurityConfig {
         CustomTokenAuthenticationProcessingFilter filter = new CustomTokenAuthenticationProcessingFilter();
         filter.setAuthenticationManager(authentication -> {
                     if (userService.validate(authentication.getPrincipal().toString())) {
-                        authentication.setAuthenticated(true);
-                        var user = userService.loadUserByUsername(authentication.getPrincipal().toString());
-                        var pre = new PreAuthenticatedAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
+                        var user = userService.findByToken(authentication.getPrincipal().toString());
+                        var pre = new PreAuthenticatedAuthenticationToken(user.getUsername(), user.getPassword(), user.getRole().getAuthorities());
                         pre.setAuthenticated(true);
                         return pre;
                     } else
