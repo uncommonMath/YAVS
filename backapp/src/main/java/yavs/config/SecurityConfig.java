@@ -1,6 +1,7 @@
 package yavs.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,14 +37,14 @@ public class SecurityConfig {
         http
                 .csrf()
                 .disable()
-                .addFilterBefore(getFilter(), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(getFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/user/register/**").permitAll()
 //                .antMatchers("/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic().disable();
+                .httpBasic();//.disable();
         http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
         return http.build();
     }
@@ -53,7 +55,7 @@ public class SecurityConfig {
         filter.setAuthenticationManager(authentication -> {
                     if (userService.validate(authentication.getPrincipal().toString())) {
                         var user = userService.findByToken(authentication.getPrincipal().toString());
-                        var pre = new PreAuthenticatedAuthenticationToken(user.getUsername(), user.getPassword(), user.getRole().getAuthorities());
+                        var pre = new PreAuthenticatedAuthenticationToken(user.getEmail(), user.getPassword(), user.getRole().getAuthorities());
                         pre.setAuthenticated(true);
                         return pre;
                     } else

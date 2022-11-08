@@ -2,8 +2,11 @@ package yavs.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 import yavs.model.lobby.Lobby;
+import yavs.model.notification.Alert;
 import yavs.service.LobbyService;
 
 import javax.persistence.EntityNotFoundException;
@@ -44,5 +47,12 @@ public class LobbyController {
         }
         else
             throw new EntityNotFoundException("Entity with id=" + id + "not found!");
+    }
+
+    @MessageMapping("/alert")
+    public void notifyAboutAction(@Payload Alert alert) {
+        if (alert.getLobbyId() != null) {
+            service.sendAlertToUsers(alert);
+        }
     }
 }

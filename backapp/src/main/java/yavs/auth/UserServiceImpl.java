@@ -16,8 +16,8 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String token) {
-        var user = repo.findByToken(token).orElse(null);
+    public UserDetails loadUserByUsername(String email) {
+        var user = repo.findByEmail(email).orElse(null);
         return user != null ? user.toUserDetails() : null;
     }
 

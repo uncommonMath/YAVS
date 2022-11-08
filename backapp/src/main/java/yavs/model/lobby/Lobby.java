@@ -38,4 +38,12 @@ public class Lobby {
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private List<User> participants;
+
+    @ManyToMany
+    @JoinTable(
+            name = "enabled_notifications_users",
+            joinColumns = {@JoinColumn(name = "lobby_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private List<User> enabledNotificationsUsers;
 }

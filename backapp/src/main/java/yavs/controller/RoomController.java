@@ -57,7 +57,6 @@ public class RoomController {
     public void chat(@DestinationVariable Long roomId, @Payload ChatMessage message, Principal principal) {
         var sender = roomService.getUserByUsername(principal.getName());
         var users = roomService.getAllUsers(roomId);
-//        System.out.println(simpleBrokerRegistration.toString());
         if (!roomService.isUserMuted(sender, roomId)) {
             users.stream()
                     .filter(user -> !user.getBlacklist().contains(sender.getId()))
